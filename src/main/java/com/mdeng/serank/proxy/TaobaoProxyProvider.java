@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.mdeng.common.http.HttpRequestBuilder;
+import com.ymssdeng.basis.helper.http.HttpRequestBuilder;
+import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
 
 @Component
 public class TaobaoProxyProvider implements ProxyProvider {
@@ -28,7 +29,7 @@ public class TaobaoProxyProvider implements ProxyProvider {
 
     String url = String.format(urlTemplate, size);
     String content =
-        HttpRequestBuilder.create().get(url).execute(new HttpRequestBuilder.StringEntityHandler());
+        HttpRequestBuilder.create().get(url).execute(HttpResponseHandlers.stringHandler());
     BufferedReader bufferedReader = new BufferedReader(new StringReader(content));
 
     String line = null;

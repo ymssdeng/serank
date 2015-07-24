@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.mdeng.common.http.HttpRequestBuilder;
+import com.ymssdeng.basis.helper.http.HttpRequestBuilder;
+import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
 
 /**
  * Simple HTTP proxy pool
@@ -34,6 +35,7 @@ public class HttpProxyPool {
   private ProxyProvider provider;
   @Value("${serank.proxy.enabled}")
   private boolean proxyEnabled;
+
   public HttpProxyPool() {}
 
   @Autowired
@@ -94,7 +96,7 @@ public class HttpProxyPool {
     RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
     StatusLine sl =
         HttpRequestBuilder.create().get(CHECK_PROXY_URL).config(config)
-            .execute(new HttpRequestBuilder.StatusLineHandler());
+            .execute(HttpResponseHandlers.statusLineHandler());
     return sl != null && sl.getStatusCode() == 200;
   }
 }

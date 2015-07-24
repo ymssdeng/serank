@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.mdeng.common.utils.Dates;
 import com.mdeng.serank.keyword.KeywordRank;
 import com.mdeng.serank.keyword.Rank;
+import com.ymssdeng.basis.helper.utils.Dates;
 
 /**
  * Log keyword rank to file

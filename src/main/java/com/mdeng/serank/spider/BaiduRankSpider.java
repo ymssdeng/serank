@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
-import com.mdeng.common.utils.Charsets;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.Rank;
+import com.ymssdeng.basis.helper.utils.Charsets;
 
 /**
  * Baidu PC rank spider

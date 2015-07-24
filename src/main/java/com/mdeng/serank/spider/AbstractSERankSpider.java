@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.http.HttpHost;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Strings;
-import com.mdeng.common.http.HttpRequestBuilder;
-import com.mdeng.common.http.HttpRequestBuilder.StringEntityHandler;
 import com.mdeng.serank.SERankRegex;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.KeywordRank;
@@ -20,6 +19,8 @@ import com.mdeng.serank.keyword.Rank;
 import com.mdeng.serank.keyword.consumer.KeywordRankConsumer;
 import com.mdeng.serank.keyword.provider.KeywordProvider;
 import com.mdeng.serank.proxy.HttpProxyPool;
+import com.ymssdeng.basis.helper.http.HttpRequestBuilder;
+import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
 
 /**
  * Abstract spider for keyword rank in search engine.
@@ -113,7 +114,7 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected String getPageContent(String url) {
     String content = null;
     HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
-    StringEntityHandler handler = new StringEntityHandler();
+    ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
     if (!proxyEnabled) {
       content = builder.execute(handler);
     } else {
