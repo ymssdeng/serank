@@ -29,11 +29,6 @@
 			<version>1.7.12</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ymssdeng</groupId>
-			<artifactId>basis-helper</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>3.2.3.RELEASE</version>
@@ -42,6 +37,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>3.2.3.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ymssdeng</groupId>
+			<artifactId>basis-helper</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
