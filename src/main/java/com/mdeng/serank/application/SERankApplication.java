@@ -17,7 +17,7 @@ public class SERankApplication {
     AnnotationConfigApplicationContext context = null;
     context = new AnnotationConfigApplicationContext(SERankConfig.class);
     SERankExtractor executor = context.getBean(SERankExtractor.class);
-    executor.execute();
+    executor.execute(); 
   }
 
 }
