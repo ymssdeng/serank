@@ -1,5 +1,6 @@
 package com.mdeng.serank.keyword.consumer;
 
+import com.mdeng.serank.keyword.Keyword;
 import com.mdeng.serank.keyword.KeywordRank;
 
 public interface KeywordRankConsumer {
@@ -9,5 +10,5 @@ public interface KeywordRankConsumer {
    * 
    * @param keywordRank
    */
-  void consume(KeywordRank keywordRank);
+  <T extends Keyword> void consume(KeywordRank<T> keywordRank);
 }

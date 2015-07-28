@@ -5,25 +5,23 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mdeng.serank.spider.GrabResult;
 
-public class KeywordRank {
-  private int group;
-  private String keyword;
+/**
+ * 关键词排名信息
+ * 
+ * @author hui.deng
+ *
+ * @param <T>
+ */
+public class KeywordRank<T extends Keyword> {
+  private T keyword;
   private GrabResult result = GrabResult.EMPTY_PAGE;
   private List<Rank> rankInfos = Lists.newArrayList();
 
-  public int getGroup() {
-    return group;
-  }
-
-  public void setGroup(int group) {
-    this.group = group;
-  }
-
-  public String getKeyword() {
+  public T getKeyword() {
     return keyword;
   }
 
-  public void setKeyword(String keyword) {
+  public void setKeyword(T keyword) {
     this.keyword = keyword;
   }
 
@@ -45,5 +43,26 @@ public class KeywordRank {
 
   public void addRankInfo(Rank rInfo) {
     this.rankInfos.add(rInfo);
+  }
+
+  public static class Rank {
+    private String host;
+    private int rank;
+
+    public String getHost() {
+      return host;
+    }
+
+    public void setHost(String host) {
+      this.host = host;
+    }
+
+    public int getRank() {
+      return rank;
+    }
+
+    public void setRank(int rank) {
+      this.rank = rank;
+    }
   }
 }

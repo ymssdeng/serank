@@ -1,26 +1,31 @@
 package com.mdeng.serank.keyword.provider;
 
-import com.mdeng.serank.keyword.KeywordRank;
+import java.io.IOException;
+
+import com.mdeng.serank.keyword.Keyword;
 
 /**
- * Keyword is grouped
+ * 关键词提供方
  * 
- * @author Administrator
+ * @author hui.deng
  *
+ * @param <T>
  */
-public interface KeywordProvider {
+public interface KeywordProvider<T extends Keyword> {
 
   /**
-   * Whether has next keyword in current group.
+   * Whether has next keyword.
    * 
    * @return
+   * @throws IOException 
    */
-  boolean hasNextKeyword(int groupId);
+  boolean hasNextKeyword() throws IOException;
 
   /**
-   * To get next keyword in current group.
+   * To get next keyword.
    * 
    * @return
+   * @throws IOException 
    */
-  KeywordRank nextKeyword(int groupId);
+  T nextKeyword() throws IOException;
 }

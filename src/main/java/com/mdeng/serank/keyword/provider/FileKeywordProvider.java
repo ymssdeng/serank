@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 
@@ -15,19 +16,38 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.mdeng.serank.keyword.KeywordRank;
+import com.mdeng.serank.keyword.Keyword;
 
 @Component
-public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvider {
+public class FileKeywordProvider implements KeywordProvider<Keyword> {
 
   private Logger logger = LoggerFactory.getLogger(FileKeywordProvider.class);
   @Value("${serank.keyword.dir}")
   private String dir;
   private File[] files;
-  private int fileIndex = 0;
-  private int groupId = 0;
-  private int keywordIndex = 0;
-  private List<String> lines;
+  private AtomicInteger fileIndex = new AtomicInteger();
+  private static ThreadLocal<FileKeyword> tl = new ThreadLocal<FileKeyword>();
+
+  private class FileKeyword {
+    private List<String> lines;
+    private int cursor;
+
+    public List<String> getLines() {
+      return lines;
+    }
+
+    public void setLines(List<String> lines) {
+      this.lines = lines;
+    }
+
+    public int getCursor() {
+      return cursor;
+    }
+
+    public void setCursor(int cursor) {
+      this.cursor = cursor;
+    }
+  }
 
   @PostConstruct
   public void init() {
@@ -35,45 +55,47 @@ public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvide
   }
 
   @Override
-  public boolean hasNextGroup() {
-    if (files == null) return false;
-    return fileIndex < files.length;
+  public boolean hasNextKeyword() throws IOException {
+    FileKeyword fk = null;
+    if ((fk = tl.get()) == null) {
+      int index = fileIndex.getAndIncrement();
+      if (index >= files.length) {
+        throw new IllegalAccessError("no more file to be accessed");
+      }
+      fk = readFile(index);
+      tl.set(fk);
+    }
+
+    return fk.getCursor() < fk.getLines().size();
   }
 
-  @Override
-  public int nextGroup() {
-    if (!hasNextGroup()) return 0;
-
-    String pathstr = files[fileIndex++].getAbsolutePath();
+  private FileKeyword readFile(int index) throws IOException {
+    String pathstr = files[index].getAbsolutePath();
     Path path = Paths.get(pathstr);
 
     // read file
     try {
-      lines = Files.readAllLines(path, Charset.forName("utf-8"));
+      List<String> lines = Files.readAllLines(path, Charset.forName("utf-8"));
+      FileKeyword fk = new FileKeyword();
+      fk.setLines(lines);
+      return fk;
     } catch (IOException e) {
-      logger.error("Failed to read keyword file {}:{}", path, e.getMessage());
-      return 0;
+      logger.error("Failed to read keyword file {}", path, e);
+      throw e;
+    }
+  }
+
+  @Override
+  public Keyword nextKeyword() throws IOException {
+    if (!hasNextKeyword()) {
+      throw new IllegalAccessError("no more keyword for current file");
     }
 
-    // group_1.txt
-    String filename = path.getFileName().toString().split("\\.")[0];
-    groupId = Integer.valueOf(filename.replace("group_", ""));
-    return groupId;
-  }
-
-  @Override
-  public synchronized boolean hasNextKeyword(int groupId) {
-    if (groupId <= 0) return false;
-    return this.groupId == groupId ? keywordIndex < lines.size() : false;
-  }
-
-  @Override
-  public synchronized KeywordRank nextKeyword(int groupId) {
-    if (!hasNextKeyword(groupId)) return null;
-    KeywordRank kr = new KeywordRank();
-    kr.setGroup(groupId);
-    kr.setKeyword(lines.get(keywordIndex++).trim());
-    return kr;
+    FileKeyword fk = tl.get();
+    Keyword keyword = new Keyword();
+    keyword.setKeyword(fk.getLines().get(fk.getCursor()));
+    fk.setCursor(fk.getCursor() + 1);
+    return keyword;
   }
 
 }

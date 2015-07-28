@@ -14,8 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import com.google.common.base.Strings;
 import com.mdeng.serank.SERankRegex;
 import com.mdeng.serank.SEType;
+import com.mdeng.serank.keyword.Keyword;
 import com.mdeng.serank.keyword.KeywordRank;
-import com.mdeng.serank.keyword.Rank;
+import com.mdeng.serank.keyword.KeywordRank.Rank;
 import com.mdeng.serank.keyword.consumer.KeywordRankConsumer;
 import com.mdeng.serank.keyword.provider.KeywordProvider;
 import com.mdeng.serank.proxy.HttpProxyPool;
@@ -28,7 +29,7 @@ import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
  * @author Administrator
  *
  */
-public abstract class AbstractSERankSpider implements Runnable {
+public abstract class AbstractSERankSpider<T extends Keyword> implements Runnable {
 
   protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -38,16 +39,15 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected int retries = 3;
   protected SERankRegex serRegex = new SERankRegex();
   @Autowired
-  protected KeywordProvider keywordProvider;
+  protected KeywordProvider<T> kp;
   @Autowired(required = false)
-  protected KeywordRankConsumer keywordRankConsumer;
+  protected KeywordRankConsumer krc;
   @Autowired
   protected HttpProxyPool pool;
   @Value("${serank.proxy.enabled}")
   protected boolean proxyEnabled;
   @Value("${serank.spider.top}")
   protected int top = 10;
-  protected int groupId;
 
   private static final int CONNECTION_TIMEOUT = 10 * 1000;
   private static final int SOCKET_TIMEOUT = 10 * 1000;
@@ -56,36 +56,40 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   @Override
   public void run() {
-    if (keywordProvider == null) {
+    if (kp == null) {
       logger.error("keyword provider null");
       return;
     }
 
-    while (keywordProvider.hasNextKeyword(groupId)) {
-      KeywordRank kr = keywordProvider.nextKeyword(groupId);
-      if (kr == null) {
-        logger.warn("input Keyword rank null");
-      } else {
-        kr.setKeyword(kr.getKeyword() != null ? kr.getKeyword().trim() : null);
-        if (Strings.isNullOrEmpty(kr.getKeyword())) {
-          kr.setResult(GrabResult.SUCCESS);
-        }
+    try {
+      while (kp.hasNextKeyword()) {
+        Keyword keyword = kp.nextKeyword();
+        if (keyword == null) {
+          logger.warn("input Keyword rank null");
+        } else {
+          KeywordRank<T> kr = new KeywordRank<T>();
+          if (!kr.getKeyword().isValid()) {
+            kr.setResult(GrabResult.SUCCESS);
+          }
 
-        int cur = 0;
-        while (cur++ < retries && !GrabResult.SUCCESS.equals(kr.getResult())) {
-          kr = grab(kr);
-        }
-        logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
-        if (keywordRankConsumer != null && kr.getResult() == GrabResult.SUCCESS) {
-          keywordRankConsumer.consume(kr);
+          int cur = 0;
+          while (cur++ < retries && !GrabResult.SUCCESS.equals(kr.getResult())) {
+            kr = grab(kr);
+          }
+          logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
+          if (krc != null && kr.getResult() == GrabResult.SUCCESS) {
+            krc.consume(kr);
+          }
         }
       }
+      logger.info("one spider finished");
+    } catch (Exception e) {
+      logger.error("spider run failed", e);
     }
 
-    logger.info("group {} finished", groupId);
   }
 
-  protected KeywordRank grab(KeywordRank keyword) {
+  protected KeywordRank<T> grab(KeywordRank<T> keyword) {
     String url = getUrl(keyword.getKeyword());
     String content = getPageContent(url);
 
@@ -129,19 +133,19 @@ public abstract class AbstractSERankSpider implements Runnable {
   }
 
   public KeywordRankConsumer getKeywordRankConsumer() {
-    return keywordRankConsumer;
+    return krc;
   }
 
-  public void setKeywordRankConsumer(KeywordRankConsumer keywordRankConsumer) {
-    this.keywordRankConsumer = keywordRankConsumer;
+  public void setKeywordRankConsumer(KeywordRankConsumer krc) {
+    this.krc = krc;
   }
 
-  public KeywordProvider getKeywordProvider() {
-    return keywordProvider;
+  public KeywordProvider<T> getKeywordProvider() {
+    return kp;
   }
 
-  public void setKeywordProvider(KeywordProvider keywordProvider) {
-    this.keywordProvider = keywordProvider;
+  public void setKeywordProvider(KeywordProvider<T> kp) {
+    this.kp = kp;
   }
 
   public boolean isProxyEnabled() {
@@ -152,7 +156,7 @@ public abstract class AbstractSERankSpider implements Runnable {
     this.proxyEnabled = proxyEnabled;
   }
 
-  protected abstract String getUrl(String keyword);
+  protected abstract String getUrl(T keyword);
 
   /**
    * Extract a rank information
@@ -201,9 +205,5 @@ public abstract class AbstractSERankSpider implements Runnable {
     }
 
     return host;
-  }
-
-  public void setGroup(int groupId) {
-    this.groupId = groupId;
   }
 }

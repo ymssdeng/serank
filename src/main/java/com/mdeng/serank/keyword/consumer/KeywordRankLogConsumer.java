@@ -4,9 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.mdeng.serank.keyword.Keyword;
 import com.mdeng.serank.keyword.KeywordRank;
-import com.mdeng.serank.keyword.Rank;
-import com.ymssdeng.basis.helper.utils.Dates;
 
 /**
  * Log keyword rank to file
@@ -21,13 +20,8 @@ public class KeywordRankLogConsumer implements KeywordRankConsumer {
   private Logger rankLogger = LoggerFactory.getLogger("consumer");
 
   @Override
-  public void consume(KeywordRank kr) {
-    String date = Dates.formatNow("yyyyMMdd");
-    for (Rank r : kr.getRankInfos()) {
-      String info =
-          String.format("%s_%d_%s_%d_%s", date, kr.getGroup(), kr.getKeyword(), r.getRank(), r.getHost());
-      rankLogger.info(info);
-    }
+  public <T extends Keyword> void consume(KeywordRank<T> kr) {
+    //TODO: log keyword rank
 
   }
 

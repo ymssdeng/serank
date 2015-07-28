@@ -2,7 +2,7 @@ package com.mdeng.serank.application;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.mdeng.serank.executor.StrategyExecutor;
+import com.mdeng.serank.executor.SERankExtractor;
 
 /**
  * SE Rank application main entry
@@ -16,7 +16,7 @@ public class SERankApplication {
   public static void main(String[] args) {
     AnnotationConfigApplicationContext context = null;
     context = new AnnotationConfigApplicationContext(SERankConfig.class);
-    StrategyExecutor executor = context.getBean(StrategyExecutor.class);
+    SERankExtractor executor = context.getBean(SERankExtractor.class);
     executor.execute();
   }
 

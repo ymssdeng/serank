@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.mdeng.serank.SEType;
-import com.mdeng.serank.keyword.Rank;
+import com.mdeng.serank.keyword.Keyword;
+import com.mdeng.serank.keyword.KeywordRank.Rank;
 import com.ymssdeng.basis.helper.utils.Charsets;
 
 /**
@@ -17,7 +18,7 @@ import com.ymssdeng.basis.helper.utils.Charsets;
  *
  */
 @Component
-public class BaiduRankSpider extends AbstractSERankSpider {
+public class BaiduRankSpider<T extends Keyword> extends AbstractSERankSpider<T> {
 
   @Override
   protected SEType getSEType() {
@@ -58,9 +59,9 @@ public class BaiduRankSpider extends AbstractSERankSpider {
   }
 
   @Override
-  protected String getUrl(String keyword) {
+  protected String getUrl(T keyword) {
     // TODO encode keyword
-    String url = "http://www.baidu.com/s?wd=" + keyword + "&pn=0&rn="+top;
+    String url = "http://www.baidu.com/s?wd=" + keyword.getKeyword() + "&pn=0&rn="+top;
     return url;
   }
 
