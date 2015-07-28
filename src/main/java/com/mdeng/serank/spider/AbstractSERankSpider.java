@@ -63,11 +63,12 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
 
     try {
       while (kp.hasNextKeyword()) {
-        Keyword keyword = kp.nextKeyword();
+        T keyword = kp.nextKeyword();
         if (keyword == null) {
           logger.warn("input Keyword rank null");
         } else {
           KeywordRank<T> kr = new KeywordRank<T>();
+          kr.setKeyword(keyword);
           if (!kr.getKeyword().isValid()) {
             kr.setResult(GrabResult.SUCCESS);
           }
@@ -76,7 +77,7 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
           while (cur++ < retries && !GrabResult.SUCCESS.equals(kr.getResult())) {
             kr = grab(kr);
           }
-          logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
+          logger.info("Result for keyword {}:{}", kr.getKeyword().getKeyword(), kr.getResult());
           if (krc != null && kr.getResult() == GrabResult.SUCCESS) {
             krc.consume(kr);
           }
