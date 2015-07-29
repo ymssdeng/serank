@@ -1,4 +1,4 @@
-package com.mdeng.serank.keyword.provider;
+package com.ymssdeng.serank.keyword.provider;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.mdeng.serank.keyword.FileKeyword;
-import com.mdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.FileKeyword;
+import com.ymssdeng.serank.keyword.Keyword;
 
 @Component
 public class FileKeywordProvider implements KeywordProvider<Keyword> {

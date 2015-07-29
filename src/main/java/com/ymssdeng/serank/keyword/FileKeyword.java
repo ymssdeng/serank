@@ -1,4 +1,4 @@
-package com.mdeng.serank.keyword;
+package com.ymssdeng.serank.keyword;
 
 public class FileKeyword extends Keyword {
   private String filename;

@@ -1,4 +1,4 @@
-package com.mdeng.serank.proxy;
+package com.ymssdeng.serank.proxy;
 
 import java.io.BufferedReader;
 import java.io.IOException;

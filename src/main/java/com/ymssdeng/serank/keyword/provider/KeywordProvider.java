@@ -1,8 +1,8 @@
-package com.mdeng.serank.keyword.provider;
+package com.ymssdeng.serank.keyword.provider;
 
 import java.io.IOException;
 
-import com.mdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.Keyword;
 
 /**
  * 关键词提供方

@@ -10,6 +10,9 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ymssdeng.serank.mapreduce.SERankMapper;
+import com.ymssdeng.serank.mapreduce.SERankReducer;
+
 public class SERankMRTest {
   MapDriver<Object, Text, Text, IntWritable> mapDriver;
   ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;

@@ -1,7 +1,7 @@
-package com.mdeng.serank.keyword.consumer;
+package com.ymssdeng.serank.keyword.consumer;
 
-import com.mdeng.serank.keyword.Keyword;
-import com.mdeng.serank.keyword.KeywordRank;
+import com.ymssdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.KeywordRank;
 
 public interface KeywordRankConsumer {
 

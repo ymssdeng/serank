@@ -1,4 +1,4 @@
-package com.mdeng.serank.executor;
+package com.ymssdeng.serank.executor;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.mdeng.serank.spider.AbstractSERankSpider;
+import com.ymssdeng.serank.spider.AbstractSERankSpider;
 
 /**
  * Rank executor using multi-thread.

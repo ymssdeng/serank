@@ -1,4 +1,4 @@
-package com.mdeng.serank.keyword;
+package com.ymssdeng.serank.keyword;
 
 /**
  * 搜索关键词

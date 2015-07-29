@@ -1,8 +1,8 @@
-package com.mdeng.serank.application;
+package com.ymssdeng.serank.application;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.mdeng.serank.executor.SERankExtractor;
+import com.ymssdeng.serank.executor.SERankExtractor;
 
 /**
  * SE Rank application main entry

@@ -1,4 +1,4 @@
-package com.mdeng.serank.spider;
+package com.ymssdeng.serank.spider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
-import com.mdeng.serank.SEType;
-import com.mdeng.serank.keyword.Keyword;
-import com.mdeng.serank.keyword.KeywordRank.Rank;
 import com.ymssdeng.basis.helper.utils.Charsets;
+import com.ymssdeng.serank.SEType;
+import com.ymssdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.KeywordRank.Rank;
 
 /**
  * Baidu PC rank spider

@@ -1,4 +1,4 @@
-package com.mdeng.serank.proxy;
+package com.ymssdeng.serank.proxy;
 
 import java.util.Iterator;
 import java.util.List;

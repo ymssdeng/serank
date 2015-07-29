@@ -1,9 +1,9 @@
-package com.mdeng.serank.keyword;
+package com.ymssdeng.serank.keyword;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.mdeng.serank.spider.GrabResult;
+import com.ymssdeng.serank.spider.GrabResult;
 
 /**
  * 关键词排名信息

@@ -1,4 +1,4 @@
-package com.mdeng.serank.spider;
+package com.ymssdeng.serank.spider;
 
 import java.net.URL;
 import java.util.List;
@@ -12,16 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Strings;
-import com.mdeng.serank.SERankRegex;
-import com.mdeng.serank.SEType;
-import com.mdeng.serank.keyword.Keyword;
-import com.mdeng.serank.keyword.KeywordRank;
-import com.mdeng.serank.keyword.KeywordRank.Rank;
-import com.mdeng.serank.keyword.consumer.KeywordRankConsumer;
-import com.mdeng.serank.keyword.provider.KeywordProvider;
-import com.mdeng.serank.proxy.HttpProxyPool;
 import com.ymssdeng.basis.helper.http.HttpRequestBuilder;
 import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
+import com.ymssdeng.serank.SERankRegex;
+import com.ymssdeng.serank.SEType;
+import com.ymssdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.KeywordRank;
+import com.ymssdeng.serank.keyword.KeywordRank.Rank;
+import com.ymssdeng.serank.keyword.consumer.KeywordRankConsumer;
+import com.ymssdeng.serank.keyword.provider.KeywordProvider;
+import com.ymssdeng.serank.proxy.HttpProxyPool;
 
 /**
  * Abstract spider for keyword rank in search engine.
