@@ -36,7 +36,7 @@ public class FileKeywordProvider implements KeywordProvider<Keyword> {
   @PostConstruct
   public void init() {
     files = new File(dir).listFiles();
-    ExecutorService es = Executors.newCachedThreadPool();
+    ExecutorService es = Executors.newSingleThreadExecutor();
     readFuture = es.submit(new ReadFileThread());
   }
 
