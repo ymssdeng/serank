@@ -17,15 +17,15 @@ public interface KeywordProvider<T extends Keyword> {
    * Whether has next keyword.
    * 
    * @return
-   * @throws IOException 
    */
-  boolean hasNextKeyword() throws IOException;
+  boolean hasNextKeyword();
 
   /**
    * To get next keyword.
    * 
    * @return
-   * @throws IOException 
+   * @throws IOException
+   * @throws InterruptedException
    */
-  T nextKeyword() throws IOException;
+  T nextKeyword() throws InterruptedException;
 }
