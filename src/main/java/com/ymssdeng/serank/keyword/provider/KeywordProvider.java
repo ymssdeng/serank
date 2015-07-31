@@ -9,9 +9,8 @@ import com.ymssdeng.serank.keyword.Keyword;
  * 
  * @author hui.deng
  *
- * @param <T>
  */
-public interface KeywordProvider<T extends Keyword> {
+public interface KeywordProvider {
 
   /**
    * Whether has next keyword.
@@ -27,5 +26,5 @@ public interface KeywordProvider<T extends Keyword> {
    * @throws IOException
    * @throws InterruptedException
    */
-  T nextKeyword() throws InterruptedException;
+  <T extends Keyword> T nextKeyword() throws InterruptedException;
 }

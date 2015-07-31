@@ -10,5 +10,5 @@ public interface KeywordRankConsumer {
    * 
    * @param keywordRank
    */
-  <T extends Keyword> void consume(KeywordRank<T> keywordRank);
+  <T extends Keyword> void consume(T keyword, KeywordRank kr);
 }

@@ -1,8 +1,17 @@
 package com.ymssdeng.serank.keyword;
 
-public class FileKeyword extends Keyword {
+public class FileKeyword implements Keyword {
+  private String keyword;
   private String filename;
   private int index;
+
+  public String getKeyword() {
+    return keyword;
+  }
+
+  public void setKeyword(String keyword) {
+    this.keyword = keyword;
+  }
 
   public String getFilename() {
     return filename;

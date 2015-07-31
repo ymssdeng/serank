@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Strings;
 import com.ymssdeng.basis.helper.utils.Charsets;
 import com.ymssdeng.serank.SEType;
-import com.ymssdeng.serank.keyword.Keyword;
-import com.ymssdeng.serank.keyword.KeywordRank.Rank;
+import com.ymssdeng.serank.keyword.KeywordRank;
 
 /**
  * Baidu PC rank spider
@@ -18,7 +17,7 @@ import com.ymssdeng.serank.keyword.KeywordRank.Rank;
  *
  */
 @Component
-public class BaiduRankSpider<T extends Keyword> extends AbstractSERankSpider<T> {
+public class BaiduRankSpider extends AbstractSERankSpider {
 
   @Override
   protected SEType getSEType() {
@@ -26,10 +25,10 @@ public class BaiduRankSpider<T extends Keyword> extends AbstractSERankSpider<T> 
   }
 
   @Override
-  protected Rank extractRank(String div) {
+  protected void extractRank(String div, KeywordRank kr) {
     String regTop = " id=\"(\\d+)\" ";
     String top = serRegex.matchNthValue(div, regTop, 1);
-    if (Strings.isNullOrEmpty(top) || Strings.isNullOrEmpty(top.trim())) return null;
+    if (Strings.isNullOrEmpty(top) || Strings.isNullOrEmpty(top.trim())) return;
 
     List<String> regUrls = new ArrayList<String>();
     regUrls.add("<span\\s*class\\s*=\\s*\"g\">(.*?)(&nbsp;)?\\S*?(&nbsp;)?</span>"); // 普通列表
@@ -46,10 +45,8 @@ public class BaiduRankSpider<T extends Keyword> extends AbstractSERankSpider<T> 
       }
     }
 
-    Rank rank = new Rank();
-    rank.setRank(Integer.valueOf(top));
-    rank.setHost(getMainHost(Charsets.removeHtml(url)));
-    return rank;
+    kr.setRank(Integer.valueOf(top));
+    kr.setHost(getMainHost(Charsets.removeHtml(url)));
   }
 
   @Override
@@ -59,9 +56,9 @@ public class BaiduRankSpider<T extends Keyword> extends AbstractSERankSpider<T> 
   }
 
   @Override
-  protected String getUrl(T keyword) {
+  protected String getUrl(String keyword) {
     // TODO encode keyword
-    String url = "http://www.baidu.com/s?wd=" + keyword.getKeyword() + "&pn=0&rn="+top;
+    String url = "http://www.baidu.com/s?wd=" + keyword + "&pn=0&rn="+top;
     return url;
   }
 

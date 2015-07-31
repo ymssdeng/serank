@@ -28,14 +28,14 @@ public class SERankExtractor {
   private int frequency;
   @Value("${serank.thread.count}")
   private int threadCount = 1;
-  private List<AbstractSERankSpider<?>> spiders;
+  private List<AbstractSERankSpider> spiders;
 
-  public List<AbstractSERankSpider<?>> getSpiders() {
+  public List<AbstractSERankSpider> getSpiders() {
     return spiders;
   }
 
   @Autowired
-  public void setSpiders(List<AbstractSERankSpider<?>> spiders) {
+  public void setSpiders(List<AbstractSERankSpider> spiders) {
     this.spiders = spiders;
   }
 
@@ -55,7 +55,7 @@ public class SERankExtractor {
 
     logger.info("start to extract keyword...");
     ExecutorService es = Executors.newCachedThreadPool();
-    for (AbstractSERankSpider<?> spider : spiders) {
+    for (AbstractSERankSpider spider : spiders) {
       // spider.setGroup(groupId);
       for (int i = 0; i < threadCount; i++) {
         es.submit(spider);

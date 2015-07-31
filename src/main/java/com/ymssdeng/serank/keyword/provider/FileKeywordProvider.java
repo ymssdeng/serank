@@ -21,10 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ymssdeng.serank.keyword.FileKeyword;
-import com.ymssdeng.serank.keyword.Keyword;
 
 @Component
-public class FileKeywordProvider implements KeywordProvider<Keyword> {
+public class FileKeywordProvider implements KeywordProvider {
 
   private Logger logger = LoggerFactory.getLogger(FileKeywordProvider.class);
   @Value("${serank.keyword.dir}")
@@ -45,6 +44,7 @@ public class FileKeywordProvider implements KeywordProvider<Keyword> {
     return !kqueue.isEmpty() || !readFuture.isDone();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public FileKeyword nextKeyword() throws InterruptedException {
     if (!hasNextKeyword()) {

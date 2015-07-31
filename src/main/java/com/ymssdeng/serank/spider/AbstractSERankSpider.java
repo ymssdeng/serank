@@ -18,7 +18,6 @@ import com.ymssdeng.serank.SERankRegex;
 import com.ymssdeng.serank.SEType;
 import com.ymssdeng.serank.keyword.Keyword;
 import com.ymssdeng.serank.keyword.KeywordRank;
-import com.ymssdeng.serank.keyword.KeywordRank.Rank;
 import com.ymssdeng.serank.keyword.consumer.KeywordRankConsumer;
 import com.ymssdeng.serank.keyword.provider.KeywordProvider;
 import com.ymssdeng.serank.proxy.HttpProxyPool;
@@ -29,7 +28,7 @@ import com.ymssdeng.serank.proxy.HttpProxyPool;
  * @author Administrator
  *
  */
-public abstract class AbstractSERankSpider<T extends Keyword> implements Runnable {
+public abstract class AbstractSERankSpider implements Runnable {
 
   protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -39,7 +38,7 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
   protected int retries = 3;
   protected SERankRegex serRegex = new SERankRegex();
   @Autowired
-  protected KeywordProvider<T> kp;
+  protected KeywordProvider kp;
   @Autowired(required = false)
   protected KeywordRankConsumer krc;
   @Autowired
@@ -63,23 +62,22 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
 
     try {
       while (kp.hasNextKeyword()) {
-        T keyword = kp.nextKeyword();
+        Keyword keyword = kp.nextKeyword();
         if (keyword == null) {
-          logger.warn("input Keyword rank null");
+          logger.warn("input Keyword null");
         } else {
-          KeywordRank<T> kr = new KeywordRank<T>();
-          kr.setKeyword(keyword);
-          if (!kr.getKeyword().isValid()) {
-            kr.setResult(GrabResult.SUCCESS);
-          }
+          KeywordRank kr = new KeywordRank();
+          kr.setKeyword(keyword.getKeyword());
 
           int cur = 0;
-          while (cur++ < retries && !GrabResult.SUCCESS.equals(kr.getResult())) {
-            kr = grab(kr);
+          GrabResult gr = null;
+          while (cur++ < retries && !GrabResult.SUCCESS.equals(gr)) {
+            gr = grab(kr);
           }
-          logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
-          if (krc != null && kr.getResult() == GrabResult.SUCCESS) {
-            krc.consume(kr);
+          logger.info("Result for keyword {}:{}", kr.getKeyword(), gr);
+          
+          if (krc != null && gr == GrabResult.SUCCESS) {
+            krc.consume(keyword, kr);
           }
         }
       }
@@ -90,30 +88,25 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
 
   }
 
-  protected KeywordRank<T> grab(KeywordRank<T> keyword) {
-    String url = getUrl(keyword.getKeyword());
+  //TODO: should be a list of rank
+  protected GrabResult grab(KeywordRank kr) {
+    String url = getUrl(kr.getKeyword());
     String content = getPageContent(url);
 
     if (Strings.isNullOrEmpty(content)) {
-      keyword.setResult(GrabResult.EMPTY_PAGE);
-      return keyword;
+      return GrabResult.EMPTY_PAGE;
     }
 
     List<String> divs = getDivs(content);
     if (divs == null || divs.size() == 0) {
-      keyword.setResult(GrabResult.EMPTY_FIELD);
-      return keyword;
+      return GrabResult.EMPTY_FIELD;
     }
 
     for (String div : divs) {
-      Rank ri = extractRank(div);
-      if (ri != null) {
-        keyword.addRankInfo(ri);
-      }
+      extractRank(div, kr);
     }
 
-    keyword.setResult(GrabResult.SUCCESS);
-    return keyword;
+    return GrabResult.SUCCESS;
   }
 
   protected String getPageContent(String url) {
@@ -141,11 +134,11 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
     this.krc = krc;
   }
 
-  public KeywordProvider<T> getKeywordProvider() {
+  public KeywordProvider getKeywordProvider() {
     return kp;
   }
 
-  public void setKeywordProvider(KeywordProvider<T> kp) {
+  public void setKeywordProvider(KeywordProvider kp) {
     this.kp = kp;
   }
 
@@ -157,7 +150,7 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
     this.proxyEnabled = proxyEnabled;
   }
 
-  protected abstract String getUrl(T keyword);
+  protected abstract String getUrl(String keyword);
 
   /**
    * Extract a rank information
@@ -165,7 +158,7 @@ public abstract class AbstractSERankSpider<T extends Keyword> implements Runnabl
    * @param div
    * @return
    */
-  protected abstract Rank extractRank(String div);
+  protected abstract void extractRank(String div, KeywordRank kr);
 
   /**
    * Get html div tags for keyword.

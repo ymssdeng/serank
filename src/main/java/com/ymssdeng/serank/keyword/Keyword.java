@@ -6,21 +6,9 @@ package com.ymssdeng.serank.keyword;
  * @author hui.deng
  *
  */
-public class Keyword {
-  protected String keyword;
+public interface Keyword {
 
-  public String getKeyword() {
-    return keyword;
-  }
+  String getKeyword();
 
-  public void setKeyword(String keyword) {
-    this.keyword = keyword;
-  }
-
-  // to be override
-  public boolean isValid() {
-    if (keyword == null) return false;
-    keyword = keyword.trim();
-    return keyword.length() > 0;
-  }
+  void setKeyword(String keyword);
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.ymssdeng.serank.keyword.Keyword;
+import com.ymssdeng.serank.keyword.CateKeywordRank;
 import com.ymssdeng.serank.keyword.KeywordRank;
 
 /**
@@ -20,9 +21,9 @@ public class KeywordRankLogConsumer implements KeywordRankConsumer {
   private Logger rankLogger = LoggerFactory.getLogger("consumer");
 
   @Override
-  public <T extends Keyword> void consume(KeywordRank<T> kr) {
-    //TODO: log keyword rank
-
+  public <T extends Keyword> void consume(T keyword, KeywordRank kr) {
+    // TODO Auto-generated method stub
+    
   }
 
 }
