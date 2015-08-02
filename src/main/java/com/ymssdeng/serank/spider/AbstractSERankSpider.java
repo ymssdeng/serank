@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.ymssdeng.basis.helper.http.HttpRequestBuilder;
 import com.ymssdeng.basis.helper.http.HttpResponseHandlers;
 import com.ymssdeng.serank.SERankRegex;
@@ -66,18 +67,16 @@ public abstract class AbstractSERankSpider implements Runnable {
         if (keyword == null) {
           logger.warn("input Keyword null");
         } else {
-          KeywordRank kr = new KeywordRank();
-          kr.setKeyword(keyword.getKeyword());
-
           int cur = 0;
           GrabResult gr = null;
+          List<KeywordRank> krs = Lists.newArrayList();
           while (cur++ < retries && !GrabResult.SUCCESS.equals(gr)) {
-            gr = grab(kr);
+            gr = grab(keyword.getKeyword(), krs);
           }
-          logger.info("Result for keyword {}:{}", kr.getKeyword(), gr);
+          logger.info("Result for keyword {}:{}", keyword, gr);
           
           if (krc != null && gr == GrabResult.SUCCESS) {
-            krc.consume(keyword, kr);
+            krc.consume(keyword, krs);
           }
         }
       }
@@ -88,9 +87,8 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   }
 
-  //TODO: should be a list of rank
-  protected GrabResult grab(KeywordRank kr) {
-    String url = getUrl(kr.getKeyword());
+  protected GrabResult grab(String keyword, List<KeywordRank> ranks) {
+    String url = getUrl(keyword);
     String content = getPageContent(url);
 
     if (Strings.isNullOrEmpty(content)) {
@@ -103,7 +101,10 @@ public abstract class AbstractSERankSpider implements Runnable {
     }
 
     for (String div : divs) {
-      extractRank(div, kr);
+      KeywordRank kr = extractRank(div);
+      if (kr != null) {
+    	  ranks.add(kr);
+      }
     }
 
     return GrabResult.SUCCESS;
@@ -158,7 +159,7 @@ public abstract class AbstractSERankSpider implements Runnable {
    * @param div
    * @return
    */
-  protected abstract void extractRank(String div, KeywordRank kr);
+  protected abstract KeywordRank extractRank(String div);
 
   /**
    * Get html div tags for keyword.

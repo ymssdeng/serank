@@ -2,21 +2,12 @@ package com.ymssdeng.serank.keyword;
 
 import java.util.Date;
 
-public class KeywordRank implements Keyword {
-  private String keyword;
+public class KeywordRank {
   private int rank;
   private String host;
   private String mainhost;
   private Date exedate;
   
-  public String getKeyword() {
-    return keyword;
-  }
-
-  public void setKeyword(String keyword) {
-    this.keyword = keyword;
-  }
-
   public int getRank() {
     return rank;
   }

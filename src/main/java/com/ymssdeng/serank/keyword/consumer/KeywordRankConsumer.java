@@ -1,5 +1,7 @@
 package com.ymssdeng.serank.keyword.consumer;
 
+import java.util.List;
+
 import com.ymssdeng.serank.keyword.Keyword;
 import com.ymssdeng.serank.keyword.KeywordRank;
 
@@ -10,5 +12,5 @@ public interface KeywordRankConsumer {
    * 
    * @param keywordRank
    */
-  <T extends Keyword> void consume(T keyword, KeywordRank kr);
+  <T extends Keyword> void consume(Keyword keyword, List<KeywordRank> krs);
 }

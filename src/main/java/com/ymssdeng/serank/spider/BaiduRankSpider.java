@@ -25,10 +25,10 @@ public class BaiduRankSpider extends AbstractSERankSpider {
   }
 
   @Override
-  protected void extractRank(String div, KeywordRank kr) {
+  protected KeywordRank extractRank(String div) {
     String regTop = " id=\"(\\d+)\" ";
     String top = serRegex.matchNthValue(div, regTop, 1);
-    if (Strings.isNullOrEmpty(top) || Strings.isNullOrEmpty(top.trim())) return;
+    if (Strings.isNullOrEmpty(top) || Strings.isNullOrEmpty(top.trim())) return null;
 
     List<String> regUrls = new ArrayList<String>();
     regUrls.add("<span\\s*class\\s*=\\s*\"g\">(.*?)(&nbsp;)?\\S*?(&nbsp;)?</span>"); // 普通列表
@@ -45,8 +45,10 @@ public class BaiduRankSpider extends AbstractSERankSpider {
       }
     }
 
+    KeywordRank kr = new KeywordRank();
     kr.setRank(Integer.valueOf(top));
     kr.setHost(getMainHost(Charsets.removeHtml(url)));
+    return kr;
   }
 
   @Override
