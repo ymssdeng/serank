@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.config.RequestConfig.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +45,17 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected KeywordRankConsumer krc;
   @Autowired
   protected HttpProxyPool pool;
-  @Value("${serank.proxy.enabled}")
+  @Value("${serank.http.connecttimeout}")
+  protected int connecttimeout;
+  @Value("${serank.http.sockettimeout}")
+  protected int sockettimeout;
+  @Value("${serank.http.maxretries}")
+  protected int maxretries;
+  @Value("${serank.http.proxy}")
   protected boolean proxyEnabled;
+
   @Value("${serank.spider.top}")
   protected int top = 10;
-
-  private static final int CONNECTION_TIMEOUT = 10 * 1000;
-  private static final int SOCKET_TIMEOUT = 10 * 1000;
 
   protected abstract SEType getSEType();
 
@@ -74,7 +79,7 @@ public abstract class AbstractSERankSpider implements Runnable {
             gr = grab(keyword.getKeyword(), krs);
           }
           logger.info("Result for keyword {}:{}", keyword, gr);
-          
+
           if (krc != null && gr == GrabResult.SUCCESS) {
             krc.consume(keyword, krs);
           }
@@ -103,7 +108,7 @@ public abstract class AbstractSERankSpider implements Runnable {
     for (String div : divs) {
       KeywordRank kr = extractRank(div);
       if (kr != null) {
-    	  ranks.add(kr);
+        ranks.add(kr);
       }
     }
 
@@ -114,13 +119,14 @@ public abstract class AbstractSERankSpider implements Runnable {
     String content = null;
     HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
     ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
+    Builder builder2 =
+        RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
     if (!proxyEnabled) {
-      content = builder.execute(handler);
+      RequestConfig config = builder2.build();
+      content = builder.config(config).execute(handler);
     } else {
       HttpHost host = pool.getProxy();
-      RequestConfig config =
-          RequestConfig.custom().setProxy(host).setConnectionRequestTimeout(CONNECTION_TIMEOUT)
-              .setSocketTimeout(SOCKET_TIMEOUT).build();
+      RequestConfig config = builder2.setProxy(host).build();
       content = builder.config(config).execute(handler);
     }
 
