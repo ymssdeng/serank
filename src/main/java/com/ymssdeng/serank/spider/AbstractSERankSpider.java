@@ -3,7 +3,6 @@ package com.ymssdeng.serank.spider;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.http.HttpHost;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
@@ -72,12 +71,8 @@ public abstract class AbstractSERankSpider implements Runnable {
         if (keyword == null) {
           logger.warn("input Keyword null");
         } else {
-          int cur = 0;
-          GrabResult gr = null;
           List<KeywordRank> krs = Lists.newArrayList();
-          while (cur++ < retries && !GrabResult.SUCCESS.equals(gr)) {
-            gr = grab(keyword.getKeyword(), krs);
-          }
+          GrabResult gr = grab(keyword.getKeyword(), krs);
           logger.info("Result for keyword {}:{}", keyword, gr);
 
           if (krc != null && gr == GrabResult.SUCCESS) {
@@ -117,19 +112,17 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
-    HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
-    ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
+    HttpRequestBuilder builder = HttpRequestBuilder.create().get(url).maxRetries(maxretries);
     Builder builder2 =
         RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
-    if (!proxyEnabled) {
-      RequestConfig config = builder2.build();
-      content = builder.config(config).execute(handler);
-    } else {
-      HttpHost host = pool.getProxy();
-      RequestConfig config = builder2.setProxy(host).build();
-      content = builder.config(config).execute(handler);
+
+    if (proxyEnabled) {
+      builder2 = builder2.setProxy(pool.getProxy());
     }
 
+    RequestConfig config = builder2.build();
+    ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
+    content = builder.config(config).execute(handler);
     return content;
   }
 
