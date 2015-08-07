@@ -3,9 +3,12 @@ package com.ymssdeng.serank.spider;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import com.ymssdeng.serank.keyword.Keyword;
 import com.ymssdeng.serank.keyword.KeywordRank;
 import com.ymssdeng.serank.keyword.consumer.KeywordRankConsumer;
 import com.ymssdeng.serank.keyword.provider.KeywordProvider;
+import com.ymssdeng.serank.proxy.CommonHttpHeader;
+import com.ymssdeng.serank.proxy.HttpConnPoolManager;
 import com.ymssdeng.serank.proxy.HttpProxyPool;
 
 /**
@@ -112,14 +117,14 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
-    HttpRequestBuilder builder = HttpRequestBuilder.create().get(url).maxRetries(maxretries);
-    Builder builder2 =
-        RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
-
+    CloseableHttpClient client = HttpConnPoolManager.singleton.build();
+    HttpGet get = new HttpGet(url);
+    get.setHeaders(CommonHttpHeader.get().toArray(new Header[0]));
+    HttpRequestBuilder builder = HttpRequestBuilder.create(client).method(get).maxRetries(maxretries);
+    Builder builder2 = RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
     if (proxyEnabled) {
-      builder2 = builder2.setProxy(pool.getProxy());
+      builder2 = builder2.setProxy(pool.dequeue());
     }
-
     RequestConfig config = builder2.build();
     ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
     content = builder.config(config).execute(handler);
