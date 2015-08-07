@@ -21,7 +21,7 @@ public class BaiduRankSpider extends AbstractSERankSpider {
 
   @Override
   protected SEType getSEType() {
-    return SEType.Baidu;
+    return SEType.BAIDU;
   }
 
   @Override

@@ -185,12 +185,12 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected abstract KeywordRank extractRank(String div);
 
   /**
-   * Get html div tags for keyword.
+   * Get html div tags for content.
    * 
-   * @param keyword
+   * @param content
    * @return
    */
-  protected abstract List<String> getDivs(String keyword);
+  protected abstract List<String> getDivs(String content);
 
   protected String getHost(String url) {
     if (url.indexOf("...") >= 0) {
