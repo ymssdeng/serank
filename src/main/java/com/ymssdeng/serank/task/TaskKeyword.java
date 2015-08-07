@@ -1,39 +1,46 @@
 package com.ymssdeng.serank.task;
 
-public class TaskKeyword {
-  private int id;
-  private int task_id;
-  private int keyword_id;
+import com.ymssdeng.oceanusex.dal.OceanusEntity;
+import com.ymssdeng.oceanusex.dal.RowKey;
+import com.ymssdeng.oceanusex.dal.Table;
 
-  public int getId() {
-    return id;
+@Table(name = "t_task_keyword")
+public class TaskKeyword implements OceanusEntity {
+
+  @RowKey(autoIncrement = true)
+  private int id_task_keyword = 0;
+  private int taskid = 0;
+  private int id_keyword = 0;
+
+  public int getId_task_keyword() {
+    return id_task_keyword;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setId_task_keyword(int id_task_keyword) {
+    this.id_task_keyword = id_task_keyword;
   }
 
-  public int getTask_id() {
-    return task_id;
+  public int getTaskid() {
+    return taskid;
   }
 
-  public void setTask_id(int task_id) {
-    this.task_id = task_id;
+  public void setTaskid(int taskid) {
+    this.taskid = taskid;
   }
 
-  public int getKeyword_id() {
-    return keyword_id;
+  public int getId_keyword() {
+    return id_keyword;
   }
 
-  public void setKeyword_id(int keyword_id) {
-    this.keyword_id = keyword_id;
+  public void setId_keyword(int id_keyword) {
+    this.id_keyword = id_keyword;
   }
 
   @Override
   public String toString() {
-    return "SERankTaskKeyword [id=" + id + ", task_id=" + task_id + ", keyword_id=" + keyword_id
-        + "]";
+    return "TaskKeyword [id_task_keyword=" + id_task_keyword + ", taskid=" + taskid
+        + ", id_keyword=" + id_keyword + "]";
   }
-
-
+  
+  
 }

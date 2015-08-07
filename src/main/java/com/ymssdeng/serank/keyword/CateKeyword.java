@@ -1,26 +1,36 @@
 package com.ymssdeng.serank.keyword;
 
+import com.ymssdeng.oceanusex.dal.OceanusEntity;
+import com.ymssdeng.oceanusex.dal.RowKey;
+import com.ymssdeng.oceanusex.dal.Table;
+
+
 /**
  * 分类别的关键词
  * 
  * @author hui.deng
  *
  */
-public class CateKeyword implements Keyword {
-  private int id;
-  private String keyword;
-  private int local_id;
-  private int cate1;
-  private int cate2;
-  private int cate3;
-  private int cate4;
+@Table(name = "t_keyword")
+public class CateKeyword implements Keyword, OceanusEntity {
 
-  public int getId() {
-    return id;
+  @RowKey(autoIncrement = true)
+  private int id_keyword = 0;
+  private String keyword = null;
+  private int business_line = 0;
+  private int cityid = 0;
+  private int cate1 = 0;
+  private int cate2 = 0;
+  private int cate3 = 0;
+  private int cate4 = 0;
+  private int id_keyword_mark = 0;
+
+  public int getId_keyword() {
+    return id_keyword;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setId_keyword(int id_keyword) {
+    this.id_keyword = id_keyword;
   }
 
   public String getKeyword() {
@@ -31,12 +41,20 @@ public class CateKeyword implements Keyword {
     this.keyword = keyword;
   }
 
-  public int getLocal_id() {
-    return local_id;
+  public int getBusiness_line() {
+    return business_line;
   }
 
-  public void setLocal_id(int local_id) {
-    this.local_id = local_id;
+  public void setBusiness_line(int business_line) {
+    this.business_line = business_line;
+  }
+
+  public int getCityid() {
+    return cityid;
+  }
+
+  public void setCityid(int cityid) {
+    this.cityid = cityid;
   }
 
   public int getCate1() {
@@ -71,10 +89,19 @@ public class CateKeyword implements Keyword {
     this.cate4 = cate4;
   }
 
+  public int getId_keyword_mark() {
+    return id_keyword_mark;
+  }
+
+  public void setId_keyword_mark(int id_keyword_mark) {
+    this.id_keyword_mark = id_keyword_mark;
+  }
+
   @Override
   public String toString() {
-    return "CateKeyword [id=" + id + ", keyword=" + keyword + ", local_id=" + local_id + ", cate1="
-        + cate1 + ", cate2=" + cate2 + ", cate3=" + cate3 + ", cate4=" + cate4 + "]";
+    return "CateKeyword [id_keyword=" + id_keyword + ", keyword=" + keyword + ", business_line="
+        + business_line + ", cityid=" + cityid + ", cate1=" + cate1 + ", cate2=" + cate2
+        + ", cate3=" + cate3 + ", cate4=" + cate4 + ", id_keyword_mark=" + id_keyword_mark + "]";
   }
 
 }
