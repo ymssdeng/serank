@@ -30,6 +30,14 @@ public class TaobaoProxyProvider implements ProxyProvider {
     String url = String.format(urlTemplate, size);
     String content =
         HttpRequestBuilder.create().get(url).execute(HttpResponseHandlers.stringHandler());
+    if (Strings.isNullOrEmpty(content)) {
+      logger.error("Failed to get proxies from taobao provider");
+      return ret;
+    } else if ("请求速度过快".equals(content)) {
+      logger.error("too often get proxies from taobao provider");
+      return ret;
+    }
+    
     BufferedReader bufferedReader = new BufferedReader(new StringReader(content));
 
     String line = null;

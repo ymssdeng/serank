@@ -1,9 +1,12 @@
 package com.ymssdeng.serank.spider;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
@@ -117,17 +120,33 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
-    CloseableHttpClient client = HttpConnPoolManager.singleton.build();
-    HttpGet get = new HttpGet(url);
-    get.setHeaders(CommonHttpHeader.get().toArray(new Header[0]));
-    HttpRequestBuilder builder = HttpRequestBuilder.create(client).method(get).maxRetries(maxretries);
-    Builder builder2 = RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
-    if (proxyEnabled) {
-      builder2 = builder2.setProxy(pool.dequeue());
+    for (int i = 0; i < maxretries; i++) {
+      CloseableHttpClient client = HttpConnPoolManager.singleton.build();
+      HttpGet get = new HttpGet(url);
+      get.setHeaders(CommonHttpHeader.get().toArray(new Header[0]));
+      HttpRequestBuilder builder =
+          HttpRequestBuilder.create(client).method(get).maxRetries(maxretries);
+      Builder builder2 =
+          RequestConfig.custom().setConnectTimeout(connecttimeout).setSocketTimeout(sockettimeout);
+      HttpHost proxy = null;
+      if (proxyEnabled) {
+        proxy = pool.dequeue();
+        builder2 = builder2.setProxy(proxy);
+      }
+
+      RequestConfig config = builder2.build();
+      ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
+      content = builder.config(config).execute(handler);
+      if (!Strings.isNullOrEmpty(content)) return content;
+
+      if (proxyEnabled) {
+        pool.declareBrokenProxy(proxy);
+      }
+      try {
+        TimeUnit.SECONDS.sleep(1);
+      } catch (InterruptedException e) {}
     }
-    RequestConfig config = builder2.build();
-    ResponseHandler<String> handler = HttpResponseHandlers.stringHandler();
-    content = builder.config(config).execute(handler);
+
     return content;
   }
 
@@ -172,6 +191,30 @@ public abstract class AbstractSERankSpider implements Runnable {
    * @return
    */
   protected abstract List<String> getDivs(String keyword);
+
+  protected String getHost(String url) {
+    if (url.indexOf("...") >= 0) {
+      url = serRegex.matchNthValue(url, "(.*?)\\.\\.\\.", 1);
+    }
+
+    if (url.indexOf("http://") < 0) {
+      url = "http://" + url;
+    }
+
+    // "(www\\.)|(\\.com\\.cn)|(\\.net\\.cn)|(\\.org\\.cn)|(\\.gov\\.cn)|(\\.cn\\.com)"
+    String host = "";
+    try {
+      URL ui = new URL(url);
+      String tempHost = ui.getHost();
+      if (tempHost != null) {
+        host = tempHost.replaceAll("(www\\.)", "");
+      }
+    } catch (MalformedURLException e) {
+      logger.error("HOST解析出错：{}", url, e);
+    }
+
+    return host;
+  }
 
   protected String getMainHost(String url) {
     if (url.indexOf("...") >= 0) {

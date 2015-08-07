@@ -7,6 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -64,11 +66,8 @@ public class HttpProxyPool {
   // 补充队列时的锁,防止队列出现重复数据;此锁已注释,重复数据不再考虑.
   // private ReentrantLock lock = new ReentrantLock();
 
-  public HttpProxyPool() {
-    start();
-  }
-
-  public synchronized void start() {
+  @PostConstruct
+  public void start() {
     try {
       scheduler = Executors.newScheduledThreadPool(SCHEDULED_COREPOOLSIZE);
       scheduler.scheduleAtFixedRate(new Runnable() {
@@ -144,6 +143,7 @@ public class HttpProxyPool {
 
   public HttpHost dequeue() {
     if (queue.size() <= Queue_MINSIZE) {
+      logger.info("trying to replenish queue...");
       replenishQueue();
     }
     try {
@@ -156,8 +156,36 @@ public class HttpProxyPool {
     }
   }
 
+  public void declareBrokenProxy(HttpHost proxy) {
+    queue.remove(proxy);
+  }
+
   public int size() {
     return queue.size();
+  }
+
+  public ProxyProvider getProvider() {
+    return provider;
+  }
+
+  public void setProvider(ProxyProvider provider) {
+    this.provider = provider;
+  }
+
+  public int getConnecttimeout() {
+    return connecttimeout;
+  }
+
+  public void setConnecttimeout(int connecttimeout) {
+    this.connecttimeout = connecttimeout;
+  }
+
+  public int getSockettimeout() {
+    return sockettimeout;
+  }
+
+  public void setSockettimeout(int sockettimeout) {
+    this.sockettimeout = sockettimeout;
   }
 
   public static void main(String[] args) {}

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 @Configuration
-@ComponentScan(basePackages = {"com.mdeng.serank"})
+@ComponentScan(basePackages = {"com.ymssdeng.serank"})
 // @PropertySource("classpath:/serank.properties")
 public class SERankConfig {
 
