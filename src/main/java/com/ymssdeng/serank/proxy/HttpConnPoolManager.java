@@ -2,15 +2,15 @@ package com.ymssdeng.serank.proxy;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpConnPoolManager {
-  private static final Log log = LogFactory.getLog(HttpConnPoolManager.class);
+  private static Logger logger = LoggerFactory.getLogger(TaobaoProxyProvider.class);
   public static final HttpConnPoolManager singleton = new HttpConnPoolManager();
   private PoolingHttpClientConnectionManager cm;
   private Thread monitorThread;
@@ -29,7 +29,7 @@ public class HttpConnPoolManager {
       monitorThread.setDaemon(true);
       monitorThread.start();
     } catch (Exception e) {
-      log.error(e.getMessage(), e);
+      logger.error(e.getMessage(), e);
     }
   }
 
@@ -62,7 +62,7 @@ public class HttpConnPoolManager {
           }
         }
       } catch (Exception e) {
-        log.error(e.getMessage(), e);
+        logger.error(e.getMessage(), e);
       }
     }
 
