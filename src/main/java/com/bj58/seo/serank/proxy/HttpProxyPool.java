@@ -30,7 +30,7 @@ import com.bj58.seo.core.http.HttpResponseHandlers;
  * @author Administrator
  *
  */
-@Component
+//@Component
 public class HttpProxyPool {
   private static Logger logger = LoggerFactory.getLogger(HttpProxyPool.class);
 

@@ -2,6 +2,11 @@ package com.bj58.seo.serank.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -28,7 +33,29 @@ public class HttpTaskKeywordManager implements TaskKeywordManager {
 
   @Value("${serank.task.count}")
   private int limit = 5;
-
+  private ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+  
+  @PostConstruct
+  public void initbeat() {
+    ses.scheduleAtFixedRate(new Runnable() {
+      
+      @Override
+      public void run() {
+        beat();
+      }
+    }, 0, 1, TimeUnit.MINUTES);
+  }
+  
+  public void beat() {
+    String url = String.format("%s/get_task?beat", API_URL);
+    try {
+      HttpRequestBuilder.create().get(url).execute();  
+      logger.info("sent beat singal");
+    } catch (Exception e) {
+      logger.error("send beat singal failed");
+    }
+  }
+  
   public List<Task> getTasks() throws Exception {
     String url = String.format("%s/get_task?limit=%d", API_URL, limit);
     logger.info("GET {}", url);
